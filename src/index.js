@@ -6,6 +6,10 @@ let PokemonCollectionResource = createResource(() =>
   fetch('https://pokeapi.co/api/v2/pokemon/').then(res => res.json())
 )
 
+let PokemonResource = createResource(id =>
+  fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`).then(res => res.json())
+)
+
 function PokemonListItem({ className, component: Component = 'li', ...props }) {
   return (
     <Component
@@ -42,13 +46,28 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+function PokemonDetail({ pokemonId }) {
+  let pokemon = PokemonResource.read(pokemonId)
+
+  return (
+    <article>
+      <strong>selected pokemon id: {pokemonId}</strong>
+      <h1>{pokemon.name}</h1>
+      <p>Weight: {pokemon.weight}</p>
+    </article>
+  )
+}
+
 function PokemonList({ renderItem }) {
   return (
-    <ul>
-      {PokemonCollectionResource.read().results.map(pokemon =>
-        renderItem(pokemon)
-      )}
-    </ul>
+    <section>
+      <h3>Pokemons: </h3>
+      <ul>
+        {PokemonCollectionResource.read().results.map(pokemon =>
+          renderItem(pokemon)
+        )}
+      </ul>
+    </section>
   )
 }
 
@@ -58,14 +77,14 @@ function App() {
   return (
     <div>
       <h1>
-        <span role="img" aria-label="React Holiday Ten">
+        <span role="img" aria-label="React Holiday Eleven">
           ⚛️🎄✌️
         </span>
-        : Day 10
+        : Day 11
       </h1>
-      <strong>selected pokemon id: {selectedPokemonId}</strong>
       <ErrorBoundary>
         <React.Suspense fallback={<div>...loading</div>}>
+          <PokemonDetail pokemonId={selectedPokemonId} />
           <PokemonList
             renderItem={pokemon => (
               <PokemonListItem
