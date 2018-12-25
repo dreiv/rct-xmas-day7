@@ -42,17 +42,12 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-function PokemonList({ onSelect }) {
+function PokemonList({ renderItem }) {
   return (
     <ul>
-      {PokemonCollectionResource.read().results.map(pokemon => (
-        <PokemonListItem
-          onClick={() => onSelect(pokemon.url.split('/')[6])}
-          key={pokemon.name}
-        >
-          {pokemon.name}
-        </PokemonListItem>
-      ))}
+      {PokemonCollectionResource.read().results.map(pokemon =>
+        renderItem(pokemon)
+      )}
     </ul>
   )
 }
@@ -63,15 +58,24 @@ function App() {
   return (
     <div>
       <h1>
-        <span role="img" aria-label="React Holiday Seven">
+        <span role="img" aria-label="React Holiday Ten">
           ⚛️🎄✌️
         </span>
-        : Day 7
+        : Day 10
       </h1>
       <strong>selected pokemon id: {selectedPokemonId}</strong>
       <ErrorBoundary>
         <React.Suspense fallback={<div>...loading</div>}>
-          <PokemonList onSelect={id => setSelectedPokemonId(id)} />
+          <PokemonList
+            renderItem={pokemon => (
+              <PokemonListItem
+                onClick={() => setSelectedPokemonId(pokemon.url.split('/')[6])}
+                key={pokemon.name}
+              >
+                {pokemon.name}
+              </PokemonListItem>
+            )}
+          />
         </React.Suspense>
       </ErrorBoundary>
     </div>
